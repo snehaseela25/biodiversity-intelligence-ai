@@ -1,0 +1,18 @@
+{
+  "project": "Biodiversity Intelligence AI",
+  "demo_scenario": {
+    "region": "semi-arid",
+    "crop": "wheat",
+    "soil_ph": 7.2,
+    "organic_carbon": 0.3,
+    "soil_moisture": 15,
+    "land_use": "monoculture",
+    "species_richness": 4,
+    "habitat_diversity": 2,
+    "temperature": 34,
+    "rainfall": "low",
+    "pollution": "moderate",
+    "deforestation": "moderate",
+    "biodiversity_status": "low"
+  }
+}

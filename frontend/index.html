@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Biodiversity Intelligence AI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f2;
+            color: #1f2937;
+        }
+
+        header {
+            background: #173f2a;
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .container {
+            width: min(1100px, 92%);
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 130px;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            resize: vertical;
+            font-size: 15px;
+        }
+
+        button {
+            margin-top: 14px;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #28734a;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .status {
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .section-title {
+            color: #173f2a;
+            margin-top: 0;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(180px, 1fr)
+            );
+            gap: 15px;
+        }
+
+        .metric {
+            border: 1px solid #dbe5dc;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .metric h3 {
+            margin-top: 0;
+            font-size: 16px;
+        }
+
+        .score {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .recommendation {
+            border-left: 5px solid #28734a;
+            padding: 15px;
+            margin: 15px 0;
+            background: #f7faf7;
+            border-radius: 8px;
+        }
+
+        .recommendation h3 {
+            margin-top: 0;
+        }
+
+        .evidence {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .evidence:last-child {
+            border-bottom: none;
+        }
+
+        .evidence a {
+            color: #1769aa;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .error {
+            color: #b91c1c;
+        }
+
+        .success {
+            color: #166534;
+        }
+
+        ul {
+            line-height: 1.7;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌿 Biodiversity Intelligence AI</h1>
+    <p>AI Environmental Scientist for Biodiversity & Ecosystem Health</p>
+</header>
+
+
+<div class="container">
+
+    <!-- Input -->
+
+    <div class="card">
+
+        <h2 class="section-title">
+            Environmental Assessment
+        </h2>
+
+        <p>
+            Describe your environmental conditions in natural language.
+        </p>
+
+        <textarea
+            id="message"
+            placeholder="Example: My farm is in a semi-arid region. I grow wheat using monoculture. Soil organic carbon is 0.3%. Rainfall is low and soil moisture is 15%."
+        ></textarea>
+
+        <button onclick="analyzeEnvironment()">
+            Analyze Environment
+        </button>
+
+        <div id="loading" class="loading">
+            Analyzing environmental conditions...
+        </div>
+
+        <div id="status" class="status"></div>
+
+    </div>
+
+
+    <!-- Assessment -->
+
+    <div
+        class="card"
+        id="assessmentCard"
+        style="display:none;"
+    >
+
+        <h2 class="section-title">
+            Environmental Assessment
+        </h2>
+
+        <p id="assessment"></p>
+
+        <h3>Key Factors</h3>
+
+        <ul id="keyFactors"></ul>
+
+    </div>
+
+
+    <!-- Risk -->
+
+    <div
+        class="card"
+        id="riskCard"
+        style="display:none;"
+    >
+
+        <h2 class="section-title">
+            Environmental Risk Profile
+        </h2>
+
+        <div
+            class="metric-grid"
+            id="riskMetrics"
+        ></div>
+
+    </div>
+
+
+    <!-- Relationships -->
+
+    <div
+        class="card"
+        id="relationshipCard"
+        style="display:none;"
+    >
+
+        <h2 class="section-title">
+            Environmental Relationships
+        </h2>
+
+        <ul id="relationships"></ul>
+
+    </div>
+
+
+    <!-- Recommendations -->
+
+    <div
+        class="card"
+        id="recommendationCard"
+        style="display:none;"
+    >
+
+        <h2 class="section-title">
+            Recommendations
+        </h2>
+
+        <div id="recommendations"></div>
+
+    </div>
+
+
+    <!-- Evidence -->
+
+    <div
+        class="card"
+        id="evidenceCard"
+        style="display:none;"
+    >
+
+        <h2 class="section-title">
+            Scientific Evidence
+        </h2>
+
+        <div id="evidence"></div>
+
+    </div>
+
+
+    <!-- Missing information -->
+
+    <div
+        class="card"
+        id="missingCard"
+        style="display:none;"
+    >
+
+        <h2 class="section-title">
+            Additional Information Needed
+        </h2>
+
+        <ul id="missing"></ul>
+
+    </div>
+
+</div>
+
+
+<footer>
+    Biodiversity Intelligence AI • Demo Environmental Intelligence System
+</footer>
+
+
+<script>
+
+const API_URL = "http://127.0.0.1:8000";
+
+
+async function analyzeEnvironment() {
+
+    const message =
+        document.getElementById("message").value.trim();
+
+    const status =
+        document.getElementById("status");
+
+    const loading =
+        document.getElementById("loading");
+
+
+    if (!message) {
+
+        status.innerHTML =
+            '<span class="error">Please describe your environmental conditions.</span>';
+
+        return;
+    }
+
+
+    loading.style.display = "block";
+
+    status.innerHTML = "";
+
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/analyze`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    session_id: "demo-session",
+                    message: message
+                })
+            }
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Server returned ${response.status}`
+            );
+        }
+
+
+        const data = await response.json();
+
+
+        displayResults(data);
+
+
+        status.innerHTML =
+            `<span class="success">Analysis completed • ${data.mode}</span>`;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        status.innerHTML =
+            `<span class="error">
+                Could not connect to the backend.
+                Make sure the FastAPI server is running.
+            </span>`;
+
+    } finally {
+
+        loading.style.display = "none";
+    }
+}
+
+
+function displayResults(data) {
+
+    // ----------------------------------------------------
+    // Assessment
+    // ----------------------------------------------------
+
+    document.getElementById(
+        "assessmentCard"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "assessment"
+    ).textContent =
+        data.environmental_assessment || "";
+
+
+    const keyFactors =
+        document.getElementById("keyFactors");
+
+    keyFactors.innerHTML = "";
+
+
+    (data.key_factors || []).forEach(
+        factor => {
+
+            const li =
+                document.createElement("li");
+
+            li.textContent = factor;
+
+            keyFactors.appendChild(li);
+        }
+    );
+
+
+    // ----------------------------------------------------
+    // Risk profile
+    // ----------------------------------------------------
+
+    document.getElementById(
+        "riskCard"
+    ).style.display = "block";
+
+
+    const metrics =
+        document.getElementById("riskMetrics");
+
+    metrics.innerHTML = "";
+
+
+    const riskProfile =
+        data.risk_profile || {};
+
+    const riskMetrics =
+        riskProfile.metrics || {};
+
+
+    Object.entries(riskMetrics).forEach(
+        ([name, item]) => {
+
+            const div =
+                document.createElement("div");
+
+            div.className = "metric";
+
+
+            const title =
+                name
+                    .replaceAll("_", " ")
+                    .replace(/\b\w/g, c =>
+                        c.toUpperCase()
+                    );
+
+
+            div.innerHTML = `
+                <h3>${title}</h3>
+                <div class="score">
+                    ${item.score}/5
+                </div>
+                <p>${item.label}</p>
+            `;
+
+
+            metrics.appendChild(div);
+        }
+    );
+
+
+    // ----------------------------------------------------
+    // Relationships
+    // ----------------------------------------------------
+
+    document.getElementById(
+        "relationshipCard"
+    ).style.display = "block";
+
+
+    const relationships =
+        document.getElementById(
+            "relationships"
+        );
+
+    relationships.innerHTML = "";
+
+
+    (data.environmental_relationships ||
+        data.relationships ||
+        []
+    ).forEach(
+        relationship => {
+
+            const li =
+                document.createElement("li");
+
+            li.textContent = relationship;
+
+            relationships.appendChild(li);
+        }
+    );
+
+
+    // ----------------------------------------------------
+    // Recommendations
+    // ----------------------------------------------------
+
+    document.getElementById(
+        "recommendationCard"
+    ).style.display = "block";
+
+
+    const recommendations =
+        document.getElementById(
+            "recommendations"
+        );
+
+    recommendations.innerHTML = "";
+
+
+    (data.recommendations || []).forEach(
+        recommendation => {
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "recommendation";
+
+
+            div.innerHTML = `
+                <h3>
+                    ${recommendation.action}
+                </h3>
+
+                <p>
+                    <strong>Why:</strong>
+                    ${recommendation.why}
+                </p>
+
+                <p>
+                    <strong>Timeframe:</strong>
+                    ${recommendation.timeframe}
+                </p>
+
+                <p>
+                    <strong>Evidence strength:</strong>
+                    ${recommendation.evidence_strength}
+                </p>
+
+                <p>
+                    <strong>Feasibility:</strong>
+                    ${recommendation.feasibility}
+                </p>
+
+                <p>
+                    <strong>Confidence:</strong>
+                    ${recommendation.confidence}
+                </p>
+
+                <p>
+                    <strong>Impacted metrics:</strong>
+                    ${recommendation.impacted_metrics.join(", ")}
+                </p>
+            `;
+
+
+            recommendations.appendChild(div);
+        }
+    );
+
+
+    // ----------------------------------------------------
+    // Evidence
+    // ----------------------------------------------------
+
+    document.getElementById(
+        "evidenceCard"
+    ).style.display = "block";
+
+
+    const evidence =
+        document.getElementById("evidence");
+
+    evidence.innerHTML = "";
+
+
+    (data.evidence || []).forEach(
+        item => {
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "evidence";
+
+
+            const link =
+                item.url
+                    ? `<a href="${item.url}" target="_blank">
+                        View source
+                       </a>`
+                    : "";
+
+
+            div.innerHTML = `
+                <h3>${item.title}</h3>
+
+                <p>
+                    <strong>Source:</strong>
+                    ${item.source}
+                </p>
+
+                <p>
+                    <strong>Year:</strong>
+                    ${item.year || "N/A"}
+                </p>
+
+                <p>
+                    ${item.passage}
+                </p>
+
+                ${link}
+            `;
+
+
+            evidence.appendChild(div);
+        }
+    );
+
+
+    // ----------------------------------------------------
+    // Missing information
+    // ----------------------------------------------------
+
+    const missing =
+        data.missing_information || [];
+
+
+    if (missing.length > 0) {
+
+        document.getElementById(
+            "missingCard"
+        ).style.display = "block";
+
+
+        const missingList =
+            document.getElementById("missing");
+
+        missingList.innerHTML = "";
+
+
+        missing.forEach(
+            item => {
+
+                const li =
+                    document.createElement("li");
+
+                li.textContent = item;
+
+                missingList.appendChild(li);
+            }
+        );
+
+    } else {
+
+        document.getElementById(
+            "missingCard"
+        ).style.display = "none";
+    }
+
+}
+
+</script>
+
+</body>
+</html>
