@@ -1,7 +1,8 @@
 from fastapi.testclient import TestClient
 from app.main import app
-from app.main import app
+from app.models.db import create_tables
 
+create_tables()
 
 client = TestClient(app)
 
